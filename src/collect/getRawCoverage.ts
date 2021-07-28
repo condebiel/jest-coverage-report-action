@@ -16,21 +16,6 @@ export const getRawCoverage = async (
     | string
     | { success: false; failReason: FailReason.TESTS_FAILED; error?: Error }
 > => {
-    if (branch) {
-        // NOTE: It is possible that the 'git fetch -all' command will fail due to different file permissions, but this is unlikely to happen with github actions, so the 'try ~ catch' block is not used.
-        await exec(`git fetch --all --depth=1`);
-        await exec(`git checkout -f ${branch}`);
-    }
-
-    // NOTE: The `npm ci` command is not used. Because if your version of npm is old, the generated `package-lock.json` will also be old, and the latest version of `npm ci` will fail.
-    fs.rmdirSync(joinPaths(workingDirectory, 'node_modules'), {
-        recursive: true,
-    });
-
-    await exec('npm i', undefined, {
-        cwd: workingDirectory,
-    });
-
     let output = '';
 
     try {
